@@ -16,6 +16,8 @@ struct ContentView: View {
   @State private var bipImage: Image = Image("clown")
   @State private var isFullSize: Bool = true
   
+  @AppStorage("savedImageData") private var savedImageData: Data?
+  
   var body: some View {
     VStack {
       Spacer()
@@ -42,7 +44,10 @@ struct ContentView: View {
       PhotosPicker(selection: $selectedPhoto, matching: .images, preferredItemEncoding: .automatic) {
         Label("Photo Library", systemImage: "photo.on.rectangle.angled")
           .font(.title2)
+          .padding(.horizontal, 20)
       }
+      .buttonStyle(.glassProminent)
+      .tint(.cooler1)
       .onChange(of: selectedPhoto) {
         
         Task {
