@@ -51,18 +51,40 @@ struct ContentView: View {
       .onChange(of: selectedPhoto) {
         
         Task {
-          guard let selectedImage = try? await selectedPhoto?.loadTransferable(type: Image.self) else {
+          
+          guard let selectedPhoto = selectedPhoto,
+                  let imageData = try? await selectedPhoto.loadTransferable(type: Data.self) else {
             print("🤬 ERROR: could not get image from load transferable.")
             return
           }
-          bipImage = selectedImage
+          // Save the image data to user defaults
+          savedImageData = imageData
+          
+          // Update the displayed image
+          if let uiImage = UIImage(data: imageData) {
+            bipImage = Image(uiImage: uiImage)
+          }
         }
         
       }
     }
+    .onAppear() {
+      loadSavedImage()
+    }
   }
   
   // Functions
+  func loadSavedImage() {
+    // Load the saved image from user defaults
+    
+    if let imageDate = UserDefaults.standard.data(forKey: "savedImageData"),
+       let uiImage = UIImage(data: imageDate) {
+      bipImage = Image(uiImage: uiImage)
+    }
+    
+  }
+  
+  
   func playSound(soundName: String) {
     /*
      Import needed module
